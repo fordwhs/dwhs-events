@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>大灣高中活動報名站</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: school notice board — sticky filter bar, then a list of activity rows, each pairing poster thumb + key facts + one signup button */
+:root{
+  --bg:#eef1f5; --surface:#ffffff; --ink:#14213d; --muted:#5a6478; --line:#d6dce6;
+  --accent:#1f5fd6; --accent-ink:#ffffff; --hot:#e8590c; --ok:#2b8a3e; --off:#8a93a3;
+  --chip:#e3e9f4;
+  --f-body:"Noto Sans TC",system-ui,"PingFang TC","Microsoft JhengHei",sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1522; --surface:#182133; --ink:#e8edf6; --muted:#9aa6bb; --line:#2a3550;
+  --accent:#5b8ff0; --accent-ink:#0b1220; --hot:#ff8a4c; --ok:#5cc178; --off:#6b7488; --chip:#223049; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1522; --surface:#182133; --ink:#e8edf6; --muted:#9aa6bb; --line:#2a3550;
+  --accent:#5b8ff0; --accent-ink:#0b1220; --hot:#ff8a4c; --ok:#5cc178; --off:#6b7488; --chip:#223049; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{padding-block:28px 18px}
+.school{font-size:13px;letter-spacing:.2em;color:var(--muted);font-weight:500}
+h1{font-size:clamp(28px,6vw,42px);font-weight:900;margin:4px 0 6px;line-height:1.2;text-wrap:balance}
+.lede{color:var(--muted);margin:0}
+.titlerow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin:4px 0 6px}
+.titlerow h1{margin:0}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--ok);border:1px solid currentColor;border-radius:999px;padding:3px 12px;white-space:nowrap}
+.live i{width:8px;height:8px;border-radius:50%;background:currentColor}
+@media (prefers-reduced-motion:no-preference){.live i{animation:blink 1.6s ease-in-out infinite}@keyframes blink{50%{opacity:.25}}}
+.lede span{display:inline-block}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.bar .wrap{display:flex;flex-wrap:wrap;gap:8px;padding-block:10px;align-items:center}
+.bar .lbl{font-size:13px;color:var(--muted);margin-right:2px}
+.f{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 14px;font:500 14px var(--f-body);cursor:pointer}
+.f[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.f:focus-visible,.btn:focus-visible,.thumb:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.sep{width:1px;height:22px;background:var(--line);margin:0 4px}
+main{padding-block:20px 48px;display:grid;gap:16px}
+.ev{display:grid;grid-template-columns:150px 1fr;grid-template-areas:"thumb head" "thumb info" "thumb act";align-content:start;column-gap:20px;row-gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px}
+.ev>.thumb,.ev>.noposter{grid-area:thumb;align-self:start}
+.head{grid-area:head;min-width:0;display:flex;flex-direction:column;gap:6px}
+.more{grid-area:info;min-width:0}
+.more>summary{display:none}
+.more .inner{display:flex;flex-direction:column;gap:10px}
+.ev>.actions{grid-area:act}
+.who{font-size:14px;font-weight:500}
+.who::before{content:"對象｜";color:var(--muted);font-weight:400}
+.f .n{font-family:var(--f-num);font-size:12px;opacity:.7;margin-left:4px}
+button,a{-webkit-tap-highlight-color:transparent}
+.btn:active,.f:active{transform:scale(.98)}
+.ev.past{opacity:.6}
+.thumb{display:block;padding:0;border:1px solid var(--line);border-radius:6px;overflow:hidden;cursor:zoom-in;background:var(--chip);aspect-ratio:1/1.414;max-width:100%}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.noposter{display:grid;place-items:center;aspect-ratio:1/1.414;border:1px dashed var(--line);border-radius:6px;color:var(--muted);font-size:13px;text-align:center;padding:10px}
+.body{min-width:0;display:flex;flex-direction:column;gap:10px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tag{font-size:12px;font-weight:500;background:var(--chip);color:var(--ink);padding:2px 10px;border-radius:4px}
+.st{font-size:12px;font-weight:700;padding:2px 10px;border-radius:4px;border:1px solid currentColor}
+.st.open{color:var(--ok)} .st.soon{color:var(--hot)} .st.closed{color:var(--off)} .st.tbd{color:var(--muted)}
+h2{font-size:22px;font-weight:900;margin:0;line-height:1.3;text-wrap:balance}
+.date{font-family:var(--f-num);font-weight:600;font-size:15px;color:var(--accent)}
+dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:0;font-size:15px}
+dt{color:var(--muted);white-space:nowrap}
+dd{margin:0;min-width:0}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.perks{display:flex;flex-wrap:wrap;gap:6px}
+.perk{font-size:13px;border:1px solid var(--line);padding:1px 10px;border-radius:999px}
+.note{font-size:14px;color:var(--muted);margin:0}
+.note b{color:var(--hot)}
+.go{color:var(--ok);font-weight:700}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;text-decoration:none;font:700 15px var(--f-body);padding:10px 20px;border-radius:8px;border:1px solid var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent;color:var(--accent);cursor:pointer}
+.btn.disabled{border-color:var(--line);color:var(--off);background:transparent;pointer-events:none}
+.empty{text-align:center;color:var(--muted);padding:40px 0}
+footer{border-top:1px solid var(--line);padding-block:20px 32px;color:var(--muted);font-size:13px}
+footer p{margin:0 0 4px}
+.lb{position:fixed;inset:0;z-index:20;background:rgba(10,14,24,.92);overflow:auto;overscroll-behavior:contain;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:calc(64px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
+.lb[hidden]{display:none}
+.lb img{width:min(720px,100%);height:auto;border-radius:6px;background:#fff}
+.lb .hint{color:#c9d2e3;font-size:13px;margin-top:10px;text-align:center}
+.lb button{position:fixed;z-index:21;min-height:44px;top:calc(12px + env(safe-area-inset-top,0px));right:calc(12px + env(safe-area-inset-right,0px));background:#fff;color:#14213d;border:0;border-radius:999px;padding:8px 16px;font:700 15px var(--f-body);cursor:pointer}
+@media (max-width:600px){
+  header.top{padding-block:18px 12px}
+  .lede{font-size:14px}
+  .bar .wrap{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;padding-block:8px}
+  .bar .wrap::-webkit-scrollbar{display:none}
+  .bar .lbl{display:none}
+  .f{flex:0 0 auto;min-height:38px;scroll-snap-align:start}
+  main{padding-block:14px 32px;gap:12px}
+  .ev{grid-template-columns:84px 1fr;grid-template-areas:"thumb head" "info info" "act act";column-gap:14px;row-gap:12px;padding:14px}
+  .noposter{font-size:12px;padding:6px}
+  h2{font-size:18px}
+  .date{font-size:14px}
+  .tags .tag,.tags .st{font-size:11px;padding:1px 8px}
+  .more{border-top:1px solid var(--line);padding-top:4px}
+  .more>summary{display:flex;justify-content:space-between;align-items:center;min-height:40px;cursor:pointer;list-style:none;font-size:14px;font-weight:500;color:var(--accent)}
+  .more>summary::-webkit-details-marker{display:none}
+  .more>summary::after{content:"展開 ▾";font-size:13px}
+  .more[open]>summary::after{content:"收合 ▴"}
+  .more .inner{padding-top:4px}
+  dl{font-size:14px;gap:6px 10px}
+  .note{font-size:13.5px}
+  .ev>.actions{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:0}
+  .ev>.actions .btn{min-height:48px;font-size:16px}
+  .ev>.actions .btn.ghost{padding-inline:14px}
+  .ev>.actions>:only-child{grid-column:1/-1}
+}
+@media (prefers-reduced-motion:no-preference){.btn,.f{transition:background .15s,color .15s}}
+</style>
+</head>
+<body>
+
+
+<header class="top">
+  <div class="wrap">
+    <div class="school">臺南市立大灣高級中學</div>
+    <div class="titlerow"><h1>活動報名站</h1><span class="live"><i aria-hidden="true"></i>活動持續更新中~</span></div>
+    <p class="lede"><span>本學期開放報名的活動都在這裡。</span><span>點海報可放大，</span><span>按「立即報名」進入報名表，</span><span>名額有限、額滿為止。</span></p>
+  </div>
+</header>
+
+<nav class="bar" aria-label="篩選活動">
+  <div class="wrap" id="filters">
+    <span class="lbl">類別</span>
+    <button class="f" id="f-all" data-cat="all" aria-pressed="true">全部</button>
+    <button class="f" id="f-trip" data-cat="校外教學" aria-pressed="false">校外教學</button>
+    <button class="f" id="f-camp" data-cat="營隊" aria-pressed="false">營隊</button>
+    <button class="f" id="f-talk" data-cat="講座" aria-pressed="false">講座</button>
+    <button class="f" id="f-arts" data-cat="藝文展演" aria-pressed="false">藝文展演</button>
+    <span class="sep" aria-hidden="true"></span>
+    <button class="f" id="f-open" data-open="1" aria-pressed="false">只看報名中</button>
+  </div>
+</nav>
+
+<main class="wrap" id="list" aria-live="polite"></main>
+
+<footer>
+  <div class="wrap">
+    <p>活動問題請洽 大灣高中 實驗研究組　Tel：<a href="tel:+88662714223,42" style="color:var(--accent);font-family:var(--f-num);user-select:all">06-2714223 #42</a></p>
+  </div>
+</footer>
+
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="海報">
+  <button type="button" id="lb-close">關閉 ✕</button>
+  <img id="lb-img" alt="">
+  <p class="hint">可用兩指放大海報，或掃描海報上的 QR Code 報名。點空白處關閉。</p>
+</div>
+
+<script>
+/* ===== 活動資料：新增活動只要在這裡加一筆 ===== */
+const EVENTS = [
+  {
+    id:"traffic", title:"換你來騎晡晡！校園交通安全教育實作課", cat:"校外教學",
+    date:"2026-11-19", dateText:"11/19（四）", time:"10:05 出發 → 12:30 返校",
+    place:"南工駕訓班（上課＋親自試駕）", who:"高一、高二同學限定", quota:"30 人",
+    perks:["免費","公假","附便當"],
+    note:"<b>10:05 準時</b>於學務處旁玄關集合，遲到不等車。報名需填班級、姓名。",
+    url:"https://script.google.com/a/macros/dwhs.tn.edu.tw/s/AKfycbxKeGCzedWco-loIRq604fxZv-_OJT9qxhOLQY0nLEHcMQiRqb4YPCffyxpmk9umuCyzg/exec",
+    poster:"traffic-safety.jpg"
+  },
+  {
+    id:"science", title:"科學探究營隊 小隊輔招募", cat:"營隊",
+    date:"2027-01-22", deadline:"2026-11-19", dateText:"12/5（六）、1/21（四）、1/22（五）",
+    time:"12/5 9:00–12:00 營隊心法（李俊儀教授）<br>1/21 9:00–16:00 行前營<br>1/22 8:00–12:00 科學營正式登場",
+    place:"大灣高中", who:"高一、高二同學限定", quota:"12 位",
+    perks:["費用全免","工讀金","服務證明","學習歷程"],
+    note:"跟著大學教授學帶營，帶國中小生玩科學。<b>報名截止 11/19（四）</b>；<b>三個時段務必全程參加。</b>",
+    url:"https://script.google.com/a/macros/dwhs.tn.edu.tw/s/AKfycbwgF_a4b4ESvVFPQ-j6mJM_gzDZRmQBLXzbA9TTrhVATSMr6ELZ9M5sFKMIOEYJ3U4zZw/exec",
+    poster:"science-camp.jpg"
+  },
+  {
+    id:"nstm", title:"科工館大師講座：人型與人形機器人的前世今生與未來", cat:"講座",
+    date:"2026-12-20", deadline:"2026-11-18", dateText:"12/20（日）",
+    time:"09:00 大灣高中出發（遊覽車）<br>10:00 大師演講（南館國際演講廳）<br>11:30 Q&amp;A 交流<br>12:00 午餐・北館展示廳參觀<br>14:00 賦歸，15:00 大灣解散",
+    place:"高雄 國立科學工藝博物館", who:"全校師生（含國中部）", quota:"30 人（一車）",
+    perks:["全程免費","遊覽車・午餐・門票全包","科工館集點卡"],
+    note:"主講：李祖聖 特聘教授。<b>報名截止 11/18（三）</b>，需填飲食與特殊需求並取得家長同意。",
+    url:"https://script.google.com/a/macros/dwhs.tn.edu.tw/s/AKfycbwi3SckRSxV3YY5eixyzRtxjmNMI96Nyb7on1xsv03lE5IGBX77YgO1eQQdC13IJ7do/exec",
+    poster:"nstm-lecture.jpg"
+  },
+  {
+    id:"mac", title:"重磅級講座：兩岸關係與大陸政策", cat:"講座",
+    date:"2026-11-20", dateText:"11/20（五）", time:"13:10–15:00（第五、六節）",
+    place:"演講廳", who:"全校教職員、高中部學生（高二全數參加）", quota:"高一、高三報名後另行通知錄取",
+    perks:["協助請公假","現場提問"],
+    note:"主講：沈有忠 教授（陸委會副主委）。內容：陸委會簡介、國際關係、兩岸互動、對岸政經狀況、案例說明。<b>高二不用報名</b>，高一、高三請先報名。",
+    url:"https://forms.gle/MArd5xoZT895FXnx5",
+    poster:"mac-lecture.jpg"
+  },
+  {
+    id:"kunqu", title:"崑曲專場《火判》導聆講座與正式演出", cat:"藝文展演",
+    date:"2026-12-16", dateText:"12/10（四）、12/16（三）",
+    time:"<span class=\"go\">12/10 10:10–11:55 導聆講座（大灣演講廳）・開放參加</span><br>12/16 12:30–15:20 正式演出（成大成功廳，遊覽車接送）・已截止",
+
+    place:"大灣演講廳、成大成功廳", who:"限全校教師、高中部學生", quota:"依報名表單說明",
+    perks:["全員免費","遊覽車接送"],
+    note:"《九蓮燈》折子戲，台積電文教基金會、台灣崑劇團合作。<b>目前演出場已截止報名</b>，但仍歡迎<span class=\"go\">講座場</span>師生前來參加，會有專業演員前來導聆，內容絕對活潑有趣！",
+    status:{k:"soon",t:"演出場已截止"}, extraTag:{k:"open",t:"講座場開放參加"}, closedBtn:"演出場已截止報名",
+    url:"https://reurl.cc/GgR3nW",
+    poster:"kunqu.jpg"
+  }
+];
+
+const today = new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Taipei"})); today.setHours(0,0,0,0);
+function status(e){
+  const d=new Date(e.date+"T00:00:00");
+  if(d<today) return {k:"closed",t:"已結束"};
+  if(e.status) return e.status;
+  if(e.deadline&&new Date(e.deadline+"T00:00:00")<today) return {k:"closed",t:"報名已截止"};
+  if(!e.url) return {k:"tbd",t:"報名連結準備中"};
+  if(e.deadline){const dl=Math.round((new Date(e.deadline+"T00:00:00")-today)/864e5); if(dl<=7) return {k:"soon",t:`報名倒數 ${dl} 天`};}
+  const days=Math.round((d-today)/864e5);
+  if(days<=7) return {k:"soon",t:"即將截止"};
+  return {k:"open",t:"報名中"};
+}
+let cat="all", openOnly=false;
+const list=document.getElementById("list");
+function render(){
+  const items=EVENTS.map(e=>({e,s:status(e)}))
+    .filter(({e,s})=>(cat==="all"||e.cat===cat)&&(!openOnly||s.k==="open"||s.k==="soon"))
+    .sort((a,b)=>(a.s.k==="closed")-(b.s.k==="closed")||a.e.date.localeCompare(b.e.date));
+  if(!items.length){list.innerHTML='<p class="empty">目前沒有符合條件的活動。</p>';return;}
+  list.innerHTML=items.map(({e,s})=>`
+  <article class="ev ${s.k==="closed"?"past":""}" id="ev-${e.id}">
+    ${e.poster?`<button class="thumb" type="button" data-src="${e.poster}" data-alt="${e.title} 海報" aria-label="放大 ${e.title} 海報"><img src="${e.poster}" alt="${e.title} 海報" loading="lazy"></button>`:`<div class="noposter">海報<br>即將公布</div>`}
+    <div class="head">
+      <div class="tags"><span class="tag">${e.cat}</span><span class="st ${s.k}">${s.t}</span>${e.extraTag?`<span class="st ${e.extraTag.k}">${e.extraTag.t}</span>`:""}</div>
+      <h2>${e.title}</h2>
+      <div class="date">${e.dateText}</div>
+      <div class="who">${e.who}</div>
+    </div>
+    <details class="more" ${mobile.matches?"":"open"}>
+      <summary>時間、地點與注意事項</summary>
+      <div class="inner">
+      <dl>
+        <dt>時間</dt><dd>${e.time}</dd>
+        <dt>地點</dt><dd>${e.place}</dd>
+        <dt>名額</dt><dd class="num">${e.quota}</dd>
+      </dl>
+      ${e.perks.length?`<div class="perks">${e.perks.map(p=>`<span class="perk">${p}</span>`).join("")}</div>`:""}
+      <p class="note">${e.note}</p>
+      </div>
+    </details>
+      <div class="actions">
+        ${s.k==="closed"?`<span class="btn disabled">${s.t}</span>`:
+          e.closedBtn?`<span class="btn disabled">${e.closedBtn}</span>`:
+          e.url?`<a class="btn primary" href="${e.url}" target="_blank" rel="noopener">立即報名 →</a>`:`<span class="btn disabled">報名連結準備中</span>`}
+        ${e.poster?`<button class="btn ghost thumb-btn" type="button" data-src="${e.poster}" data-alt="${e.title} 海報">看海報</button>`:""}
+      </div>
+  </article>`).join("");
+}
+const mobile=matchMedia("(max-width:600px)");
+mobile.addEventListener?.("change",()=>document.querySelectorAll(".more").forEach(d=>d.open=!mobile.matches));
+function counts(){
+  const n={all:EVENTS.length};
+  EVENTS.forEach(e=>n[e.cat]=(n[e.cat]||0)+1);
+  document.querySelectorAll(".f[data-cat]").forEach(b=>{
+    const c=n[b.dataset.cat]||0;
+    if(!b.querySelector(".n")) b.insertAdjacentHTML("beforeend",`<span class="n">${c}</span>`);
+    if(!c&&b.dataset.cat!=="all") b.hidden=true;
+  });
+}
+counts();
+document.getElementById("filters").addEventListener("click",ev=>{
+  const b=ev.target.closest(".f"); if(!b) return;
+  if(b.dataset.open){openOnly=!openOnly;b.setAttribute("aria-pressed",openOnly);}
+  else{cat=b.dataset.cat;document.querySelectorAll(".f[data-cat]").forEach(x=>x.setAttribute("aria-pressed",x===b));}
+  render();
+});
+const lb=document.getElementById("lb"), lbImg=document.getElementById("lb-img");
+list.addEventListener("click",ev=>{
+  const t=ev.target.closest("[data-src]"); if(!t) return;
+  lbImg.src=t.dataset.src; lbImg.alt=t.dataset.alt; lb.hidden=false; lb.scrollTop=0; document.body.style.overflow="hidden"; document.getElementById("lb-close").focus();
+});
+function closeLb(){lb.hidden=true;document.body.style.overflow="";}
+document.getElementById("lb-close").addEventListener("click",closeLb);
+lb.addEventListener("click",ev=>{if(ev.target===lb||ev.target.classList.contains("hint"))closeLb();});
+document.addEventListener("keydown",ev=>{if(ev.key==="Escape")closeLb();});
+render();
+</script>
+
+</body>
+</html>
